@@ -1,0 +1,32 @@
+trigger:
+- main
+
+pool:
+  name: 'My_Local_Pool'  # Must match the pool name created in Azure DevOps
+
+steps:
+# Step 1: Checkout Code
+- checkout: self
+  displayName: 'Checkout Code from GitHub'
+
+# Step 2: Build with Maven
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'  # Adjust path if pom.xml is in a subfolder
+    goals: 'clean package'
+    options: '-X'  # Optional: debug output
+  displayName: 'Build with Maven'
+
+# Step 3: Simulate Deployment
+- script: |
+    echo "Simulating deployment..."
+    mkdir deployed
+    copy target\*.jar deployed\
+    echo "Deployment successful!"
+  displayName: 'Simulate Deployment'
+
+# Step 4: Run Application
+- script: |
+    echo "Running the JAR file..."
+    java -jar deployed\project-1.0-SNAPSHOT.jar
+  displayName: 'Run Application'
